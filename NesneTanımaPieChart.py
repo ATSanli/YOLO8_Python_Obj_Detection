@@ -3,23 +3,23 @@ import numpy as np
 from ultralytics import YOLO
 import matplotlib.pyplot as plt
 
-# YOLOv8 modelini yükle
-model = YOLO('yolov8n.pt')  # Küçük model, daha büyük modeller için 'yolov8s.pt', 'yolov8m.pt', 'yolov8l.pt' kullanabilirsiniz.
 
-# Kameradan görüntü al
-cap = cv2.VideoCapture(0)  # Kameradan görüntü almak için. Video dosyası için 'videofile.mp4' kullanabilirsiniz.
+model = YOLO('yolov8n.pt')  
 
-# Mesafe ölçme fonksiyonu (basit versiyon, kameranın kalibrasyon verilerine göre ayarlanmalı)
+
+cap = cv2.VideoCapture(0)  
+
+
 def calculate_distance(width_in_frame, real_width, focal_length):
-    # Mesafe hesaplama formülü: (gerçek genişlik * odak uzaklığı) / çerçevedeki genişlik
+    
     distance = (real_width * focal_length) / width_in_frame
     return distance
 
-# Kameranın kalibrasyon verileri (örnek değerler)
-FOCAL_LENGTH = 700  # Piksel cinsinden odak uzaklığı
-REAL_WIDTH = 0.5    # Metre cinsinden nesnenin gerçek genişliği (örneğin, bir asker için)
 
-# Pie chart ve liste güncelleme fonksiyonu
+FOCAL_LENGTH = 700  
+REAL_WIDTH = 0.5    
+
+
 def update_display(object_info):
     plt.clf()
     distances = [info[1] for info in object_info]
@@ -37,7 +37,7 @@ def update_display(object_info):
     plt.draw()
     plt.pause(0.005)
 
-# Matplotlib için interaktif mod
+
 plt.ion()
 fig = plt.figure(figsize=(10, 5))
 
@@ -46,7 +46,7 @@ while True:
     if not ret:
         break
 
-    # YOLO modelini kullanarak nesne tespiti yap
+    
     results = model(frame)
     
     object_info = []
@@ -57,7 +57,7 @@ while True:
             label = model.names[int(bbox.cls)]  # Nesne sınıfı
             confidence = bbox.conf.item()  # Güven seviyesi
 
-            # Nesnenin merkezini ve genişliğini hesapla
+            
             center_x, center_y = (x1 + x2) // 2, (y1 + y2) // 2
             width_in_frame = x2 - x1
 
@@ -72,7 +72,7 @@ while True:
 
     cv2.imshow('YOLOv8 Object Detection', frame)
 
-    # Pie chart ve liste güncelleme
+    
     if object_info:
         update_display(object_info)
 
